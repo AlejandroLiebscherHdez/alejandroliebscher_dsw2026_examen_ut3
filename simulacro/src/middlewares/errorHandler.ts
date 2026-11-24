@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { env } from '../config/env.js';
 import { AppError } from '../errors/AppError.js';
+import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
 
 export function errorHandler(
   err: Error,
@@ -18,6 +19,15 @@ export function errorHandler(
     stack: isProduction ? undefined : err.stack,
   }),
 );
+
+if (err instanceof ResourceNotFoundError) {
+  res.status(404).json({
+    error: err.code,
+    message: err.message,
+    resourceId: err.resourceId,
+  });
+  return;
+}
 
   // Errores esperados: los lanza nuestro código a propósito (400, 404...).
   if (err instanceof AppError) {

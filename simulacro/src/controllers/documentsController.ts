@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import * as documentsService from '../services/documentsService.js';
 import { AppError } from '../errors/AppError.js';
-
+import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
 export function list(req: Request, res: Response, next: NextFunction): void {
   try {
     const page = Number(req.query.page ?? 1);
@@ -12,13 +12,18 @@ export function list(req: Request, res: Response, next: NextFunction): void {
   }
 }
 
-export function getById(req: Request, res: Response, next: NextFunction): void {
+
+export function getById(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   try {
     const documentId = String(req.params.documentId);
     const document = documentsService.getById(documentId);
 
     if (!document) {
-      throw new AppError(404, `Document with id '${documentId}' not found`, 'NOT_FOUND');
+      throw new ResourceNotFoundError(documentId);
     }
 
     res.json({ data: document });
@@ -44,13 +49,18 @@ export function create(req: Request, res: Response, next: NextFunction): void {
   }
 }
 
+
 export function update(req: Request, res: Response, next: NextFunction): void {
   try {
     const documentId = String(req.params.documentId);
-    const { title, description } = req.body;
+    const { title, description } = req.body ?? {};
 
     if (title !== undefined && (typeof title !== 'string' || title.trim().length === 0)) {
-      throw new AppError(400, 'Invalid field: title', 'INVALID_TITLE');
+      res.status(400).json({
+        error: 'INVALID_TITLE',
+        message: 'Title must be a non-empty string',
+      });
+      return;
     }
 
     const document = documentsService.update(documentId, {

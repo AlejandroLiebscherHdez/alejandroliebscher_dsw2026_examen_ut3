@@ -1,12 +1,12 @@
 
 import express from 'express';
 import type { Application } from 'express';
-
+import { env } from './config/env.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { logger } from './middlewares/logger.js';
 import { notFound } from './middlewares/notFound.js';
 import { requestId } from './middlewares/requestId.js';
-
+import { noticesRouter } from './routes/notices.js';
 import { documentsRouter } from './routes/documentsRouter.js';
 import { healthRouter } from './routes/health.js';
 import { questionsRouter } from './routes/questions.js';
@@ -16,14 +16,18 @@ export function createApp(): Application {
 
   // Middlewares: se ejecutan en este orden
   app.use(requestId);
+
+if (env.LOG !== 'OFF') {
   app.use(logger);
-  app.use(express.json());
+}
+
+app.use(express.json());
 
   // Rutas de Connectia
   app.use('/health', healthRouter);
   app.use('/api/v1/admin/documents', documentsRouter);
   app.use('/api/v1/questions', questionsRouter);
-
+  app.use('/api/v1/notices', noticesRouter);
   // Ruta de prueba que ya teníamos
   app.get('/test/:team', (req, res) => {
     const { team } = req.params;
