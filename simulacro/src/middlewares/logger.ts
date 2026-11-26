@@ -1,4 +1,6 @@
-
+// UT3, apartados 13.5-13.8: logger de peticiones.
+// Registra método, ruta, estado y duración cuando termina la respuesta.
+// LOG=OFF se controla desde app.ts, por lo que no se registra este middleware.
 import type { Request, Response, NextFunction } from 'express';
 
 export function logger(req: Request, res: Response, next: NextFunction): void {

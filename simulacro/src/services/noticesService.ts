@@ -46,6 +46,7 @@ const notices: Notice[] = [
   },
 ];
 
+// Ejercicio 7: como documentsService.list, pero primero filtra por título y después pagina.
 export function list(page: number, limit: number, search = '') {
   const filtered = notices.filter((notice) =>
     notice.title.toLowerCase().includes(search.toLowerCase()),
@@ -63,10 +64,12 @@ export function list(page: number, limit: number, search = '') {
   };
 }
 
+// Ejercicio 8: misma búsqueda find() que documentsService.getById.
 export function getById(id: string): Notice | undefined {
   return notices.find((notice) => notice.id === id);
 }
 
+// Ejercicio 8: mismo patrón de documentsService.create, guardando id y fecha.
 export function create(title: string, description: string): Notice {
   const newNotice: Notice = {
     id: randomUUID(),
@@ -79,6 +82,7 @@ export function create(title: string, description: string): Notice {
   return newNotice;
 }
 
+// Ejercicio 8: update parcial, solo cambia los campos enviados.
 export function update(id: string, changes: NoticeChanges): Notice | undefined {
   const notice = getById(id);
 

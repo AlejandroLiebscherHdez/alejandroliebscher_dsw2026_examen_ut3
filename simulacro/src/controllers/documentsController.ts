@@ -2,6 +2,8 @@ import type { Request, Response, NextFunction } from 'express';
 import * as documentsService from '../services/documentsService.js';
 import { AppError } from '../errors/AppError.js';
 import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
+// Los Gallos: documentsController.list.
+// Lee los parámetros de paginación y llama al servicio.
 export function list(req: Request, res: Response, next: NextFunction): void {
   try {
     const page = Number(req.query.page ?? 1);
@@ -13,6 +15,8 @@ export function list(req: Request, res: Response, next: NextFunction): void {
 }
 
 
+// Los Gallos: documentsController.getById; UT3, apartado 11.4.
+// Busca un documento y propaga ResourceNotFoundError si no existe.
 export function getById(
   req: Request,
   res: Response,
@@ -23,7 +27,7 @@ export function getById(
     const document = documentsService.getById(documentId);
 
     if (!document) {
-      throw new ResourceNotFoundError(documentId);
+      throw new ResourceNotFoundError(404, `Document with id '${documentId}' not found`, 'RESOURCE_NOT_FOUND', documentId);
     }
 
     res.json({ data: document });
@@ -32,6 +36,8 @@ export function getById(
   }
 }
 
+// Los Gallos: documentsController.create.
+// Valida el título, llama al servicio y responde HTTP 201.
 export function create(req: Request, res: Response, next: NextFunction): void {
   try {
     const { title, description } = req.body;
@@ -50,6 +56,8 @@ export function create(req: Request, res: Response, next: NextFunction): void {
 }
 
 
+// Los Gallos: documentsController.update; simulacro, ejercicio 4.
+// Valida title y responde directamente 400 antes de actualizar.
 export function update(req: Request, res: Response, next: NextFunction): void {
   try {
     const documentId = String(req.params.documentId);
@@ -69,7 +77,12 @@ export function update(req: Request, res: Response, next: NextFunction): void {
     });
 
     if (!document) {
-      throw new AppError(404, `Document with id '${documentId}' not found`, 'NOT_FOUND');
+      throw new ResourceNotFoundError(
+  404,
+  `Document with id '${documentId}' not found`,
+  'RESOURCE_NOT_FOUND',
+  documentId,
+);
     }
 
     res.json({ data: document });

@@ -17,11 +17,12 @@ export function createApp(): Application {
   // Middlewares: se ejecutan en este orden
   app.use(requestId);
 
-if (env.LOG !== 'OFF') {
-  app.use(logger);
-}
+  // Ejercicio 5: basado en el registro app.use(logger) de Los Gallos.
+  if (env.LOG !== 'OFF') {
+    app.use(logger);
+  }
 
-app.use(express.json());
+  app.use(express.json());
 
   // Rutas de Connectia
   app.use('/health', healthRouter);

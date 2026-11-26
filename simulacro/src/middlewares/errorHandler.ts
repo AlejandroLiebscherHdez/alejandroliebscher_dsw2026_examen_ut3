@@ -22,7 +22,6 @@ export function errorHandler(
 
 if (err instanceof ResourceNotFoundError) {
   res.status(404).json({
-    error: err.code,
     message: err.message,
     resourceId: err.resourceId,
   });
@@ -31,7 +30,6 @@ if (err instanceof ResourceNotFoundError) {
 
   // Errores esperados: los lanza nuestro código a propósito (400, 404...).
   if (err instanceof AppError) {
-    console.log("AppError capturado")
     res.status(err.statusCode).json({ error: err.code ?? 'ERROR', message: err.message });
     return;
   }
