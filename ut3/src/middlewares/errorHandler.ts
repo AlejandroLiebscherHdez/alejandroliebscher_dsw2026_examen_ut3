@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import { env } from '../config/env.js';
 import { AppError } from '../errors/AppError.js';
+import { AppErrorDescription } from '../errors/AppErrorDescription.js';
 
 // Express recognises an error handler because it has FOUR parameters.
 // `_next` is never used, but it must be there: with three parameters Express
@@ -25,6 +26,13 @@ export function errorHandler(
     }),
   );
 
+  if (err instanceof AppErrorDescription) {
+res.status(err.statusCode).json({
+message: err.message,
+resourceId: err.resourceId,
+});
+return;
+}
   // Expected errors: thrown on purpose by our code (400, 404...).
   if (err instanceof AppError) {
     res.status(err.statusCode).json({ error: err.code ?? 'ERROR', message: err.message });

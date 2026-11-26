@@ -16,13 +16,50 @@ export interface ArticleChanges {
 }
 
 // The in-memory array now lives here, not in the routes.
-const articles: Article[] = [];
+const articles: Article[] = [
+  {
+    id: 'aviso-1',
+    title: 'Sin descripción',
+    description: 'Reunión el lunes a las 10.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'aviso-2',
+    title: 'Reunión de profesores',
+    description: 'Reunión el martes a las 12.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'aviso-3',
+    title: 'Examen de DWES',
+    description: 'wddw',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'aviso-4',
+    title: 'Sin descripción',
+    description: 'Actividad el miércoles.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'aviso-5',
+    title: 'Horario de biblioteca',
+    description: 'Nuevo horario de biblioteca.',
+    createdAt: new Date().toISOString(),
+  },
+];
 
-export function list(page: number, limit: number) {
+export function list(page: number, limit: number,) {
+
+  const filteredArticles= articles.filter(
+(article) => article.description === 'Sin descripción',
+);
+
   const start = (page - 1) * limit;
   return {
     data: articles.slice(start, start + limit),
-    pagination: { page, limit, total: articles.length },
+    pagination: { page, limit, total: filteredArticles.length,},
+
   };
 }
 

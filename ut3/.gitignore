@@ -1,2 +1,5 @@
 *.log
 .DS_Store
+ut3/node_modules/
+ut3/dist/
+ut3/.env

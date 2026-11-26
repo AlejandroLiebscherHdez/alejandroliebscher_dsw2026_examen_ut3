@@ -6,13 +6,14 @@ import type { NextFunction, Request, Response } from 'express';
 
 import { AppError } from '../errors/AppError.js';
 import * as articlesService from '../services/articlesService.js';
+import { AppErrorDescription } from '../errors/AppErrorDescription.js';
 
 export function list(req: Request, res: Response, next: NextFunction): void {
   try {
     // req.query always arrives as text: the controller converts it.
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? 20);
-    res.json(articlesService.list(page, limit));
+    res.json(articlesService.list(page, limit,));
   } catch (err) {
     next(err);
   }
@@ -24,6 +25,13 @@ export function getById(req: Request, res: Response, next: NextFunction): void {
     if (!article) {
       throw new AppError(404, `Article with id '${req.params.articleId}' not found`, 'NOT_FOUND');
     }
+    
+    throw new AppErrorDescription(
+404,
+"Description must not contain ERROR",
+"INVALID_DESCRIPTION",
+String(req.params.articleId),
+);
     res.json({ data: article });
   } catch (err) {
     next(err);
@@ -35,12 +43,11 @@ export function create(req: Request, res: Response, next: NextFunction): void {
 
   try {
     const { title, description } = req.body;
-    if (!title || typeof title !== 'string') {
-      throw new AppError(400, 'Missing required field: title', 'BAD_REQUEST');
+    if (typeof title !== 'string' || title.trim().length === 0) {
+    throw new AppError(400, 'Title must be a non-empty string', 'INVALID_TITLE');
     }
-    const article = articlesService.create(
-      title.trim(),
-      typeof description === 'string' ? description.trim() : '',
+    const article = articlesService.create(title.trim(), typeof description === 'string' ? description.trim() : '',
+
     );
 
     console.log('[5] Respuesta preparada: 201', req.requestId, { data: article });

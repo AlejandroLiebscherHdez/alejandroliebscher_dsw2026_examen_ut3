@@ -12,12 +12,15 @@ import { notFound } from './middlewares/notFound.js';
 import { requestId } from './middlewares/requestId.js';
 import { articlesRouter } from './routes/articles.js';
 import { healthRouter } from './routes/health.js';
+import { env } from './config/env.js';
 
 export function createApp(): Application {
   const app = express();
 
   app.use(requestId); // first: everything after it can read req.requestId
-  app.use(logger);
+  if (env.DEPURACION !== '0') {
+    app.use(logger);
+  }
   app.use(express.json());
 
   app.use((req, _res, next) => {
